@@ -1,0 +1,1536 @@
+{
+  "info": {
+    "_postman_id": "42f71538-ee25-49e2-b216-e7a935e2506d",
+    "name": "Internet Archive APIs (archive.org + Wayback)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Internet Archive: metadata search, **full-text (OCR) search**, item metadata and downloads, search-inside, IIIF, and the Wayback Machine. No key needed for reading.\n\nDocs: https://archive.org/developers/ · https://archive.org/advancedsearch.php · https://archive.org/help/wayback_api.php"
+  },
+  "auth": {
+    "type": "noauth"
+  },
+  "item": [
+    {
+      "name": "★ Search (metadata)",
+      "id": "28fd1507-ed0f-41b1-9c9a-8ed16a39816f",
+      "item": [
+        {
+          "name": "Advanced search (metadata)",
+          "id": "7a81a6c5-cc2f-4945-9bb8-0cb2e4b3290f",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q={{query}}&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{query}}",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Searches titles, descriptions, subjects and so on across about 40M items. It does not search OCR text; use Full-text search for that."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "★ Genealogy collection",
+          "id": "82bfb026-4b25-4ed3-bbf0-6a7352a42bfe",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q={{query}} AND collection:genealogy&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{query}} AND collection:genealogy",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "about 21k family histories, county histories, directories and periodicals."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "★ Allen County Public Library (genealogy center)",
+          "id": "0a1544cc-4e1d-49ef-9aff-e837c31067f8",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q={{query}} AND collection:allen_county&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{query}} AND collection:allen_county",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "about 83k scanned genealogy books from ACPL Fort Wayne."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "★ US Census microfilm",
+          "id": "02c0b192-25ed-4ede-aaa1-769da9de530c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q=collection:us_census AND {{census_query}}&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "collection:us_census AND {{census_query}}",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "about 24k US census microfilm reels (1790–1940). Search by state or county, e.g. \"New Jersey\" AND 1910."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "★ Books by date range",
+          "id": "7d4fc60d-2c10-4c57-b0ed-9ef27ae60798",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q={{place}} AND mediatype:texts AND date:[1800-01-01 TO 1925-12-31]&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{place}} AND mediatype:texts AND date:[1800-01-01 TO 1925-12-31]",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Example: Banat, 1800–1925, returned 41 texts."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Subject search",
+          "id": "5625100b-8750-4136-8225-c33dcbaed92c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q=subject:\"{{subject}}\"&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "subject:\"{{subject}}\"",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Collection listing",
+          "id": "22eb812a-ea5b-431e-b31c-1d5812ef284a",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/advancedsearch.php?q=collection:{{collection}}&fl[]=identifier&fl[]=title&fl[]=date&fl[]=year&fl[]=mediatype&fl[]=collection&fl[]=creator&rows=50&page=1&output=json",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "advancedsearch.php"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "collection:{{collection}}",
+                  "disabled": false,
+                  "description": "Lucene query: field:value, AND/OR/NOT, \"phrases\", wildcards*"
+                },
+                {
+                  "key": "fl[]",
+                  "value": "identifier",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "title",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "date",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "year",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "mediatype",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fl[]",
+                  "value": "creator",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "rows",
+                  "value": "50",
+                  "disabled": false,
+                  "description": "per page"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "sort[]",
+                  "value": "",
+                  "disabled": true,
+                  "description": "e.g. date asc | downloads desc"
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Browse any collection by its identifier."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": ""
+    },
+    {
+      "name": "★ Full-text search",
+      "id": "a680e6f6-8dd9-4070-99cb-d0d2ff2e6b6a",
+      "item": [
+        {
+          "name": "★ Full-text (OCR) search across all books",
+          "id": "15dc2d02-52cf-405f-9df1-b56dac48e712",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/services/search/beta/page_production/?service_backend=fts&user_query={{query}}&hits_per_page=50&page=1",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "services",
+                "search",
+                "beta",
+                "page_production",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "service_backend",
+                  "value": "fts",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "user_query",
+                  "value": "{{query}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "hits_per_page",
+                  "value": "50",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Searches inside the OCR text of millions of books and microfilms. Matches are highlighted with {{{…}}}. This is a beta endpoint used by archive.org itself. Bukovsky returned 4,858 matching pages."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const h=(((j.response||{}).body||{}).hits)||{};",
+                  "const esc=s=>String(s).replace(/</g,'&lt;').replace(/\\{\\{\\{/g,'<em>').replace(/\\}\\}\\}/g,'</em>');",
+                  "const rows=(h.hits||[]).map(x=>{const f=x.fields||{};const p=(f.page_num||0);return [`<a href=\"https://archive.org/details/${f.identifier}/page/n${p}\">${f.identifier}</a>`,p,((x.highlight||{}).text||[]).slice(0,3).map(esc).join(' … ')];});",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> matching pages</p><table><tr><th>Item</th><th>Page</th><th>Snippet</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:h.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "★ Full-text phrase (place name)",
+          "id": "50034279-0af2-4ae3-a05c-053f87874932",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/services/search/beta/page_production/?service_backend=fts&user_query=\"{{phrase}}\"&hits_per_page=50",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "services",
+                "search",
+                "beta",
+                "page_production",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "service_backend",
+                  "value": "fts",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "user_query",
+                  "value": "\"{{phrase}}\"",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "hits_per_page",
+                  "value": "50",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "\"Gross Betschkerek\" returned 83 pages."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const h=(((j.response||{}).body||{}).hits)||{};",
+                  "const esc=s=>String(s).replace(/</g,'&lt;').replace(/\\{\\{\\{/g,'<em>').replace(/\\}\\}\\}/g,'</em>');",
+                  "const rows=(h.hits||[]).map(x=>{const f=x.fields||{};const p=(f.page_num||0);return [`<a href=\"https://archive.org/details/${f.identifier}/page/n${p}\">${f.identifier}</a>`,p,((x.highlight||{}).text||[]).slice(0,3).map(esc).join(' … ')];});",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> matching pages</p><table><tr><th>Item</th><th>Page</th><th>Snippet</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:h.total});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Scrape API (deep paging, cursor)",
+          "id": "042040b9-0c4a-4e2c-bafa-dc3d22ea475f",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/services/search/v1/scrape?q={{query}}&fields=identifier,title,date,mediatype,collection&count=1000",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "services",
+                "search",
+                "v1",
+                "scrape"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "{{query}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "fields",
+                  "value": "identifier,title,date,mediatype,collection",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "count",
+                  "value": "1000",
+                  "disabled": false,
+                  "description": "100–10000"
+                },
+                {
+                  "key": "cursor",
+                  "value": "",
+                  "disabled": true,
+                  "description": "from previous response"
+                }
+              ]
+            },
+            "description": "For harvesting large result sets; repeat with the returned cursor."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.expect(pm.response.code).to.eql(200));",
+                  "let j={};try{j=pm.response.json();}catch(e){}",
+                  "const docs=(j.response&&j.response.docs)||j.items||[];",
+                  "const A=v=>Array.isArray(v)?v.join('; '):(v||'');",
+                  "const rows=docs.map(d=>[`<img src=\"https://archive.org/services/img/${d.identifier}\" height=\"50\">`,`<a href=\"https://archive.org/details/${d.identifier}\">${A(d.title).slice(0,110)||d.identifier}</a>`,A(d.date||d.year).slice(0,10),A(d.mediatype),A(d.collection).slice(0,60),d.identifier]);",
+                  "pm.visualizer.set(`<style>table{border-collapse:collapse;font:13px sans-serif}td,th{border:1px solid #ccc;padding:4px 8px;vertical-align:top}th{background:#eee}em{background:#ff0}</style><p><b>{{total}}</b> items</p><table><tr><th></th><th>Title</th><th>Date</th><th>Type</th><th>Collections</th><th>identifier</th></tr>{{#each rows}}<tr>{{#each this}}<td>{{{this}}}</td>{{/each}}</tr>{{/each}}</table>`,{rows,total:(j.response&&j.response.numFound)||j.total});"
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "description": ""
+    },
+    {
+      "name": "Items, text & images",
+      "id": "b407796d-c443-4a80-acc3-fbae0d1a96bb",
+      "item": [
+        {
+          "name": "Item metadata (all)",
+          "id": "9fc1fba6-2706-498b-a895-c12aabc6ce2f",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/metadata/{{item_id}}",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "metadata",
+                "{{item_id}}"
+              ],
+              "query": []
+            },
+            "description": "Metadata, file list, server and directory."
+          },
+          "response": []
+        },
+        {
+          "name": "Item metadata — one field",
+          "id": "67907203-3b27-4302-9b9a-c0b3703b0594",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/metadata/{{item_id}}/metadata/title",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "metadata",
+                "{{item_id}}",
+                "metadata",
+                "title"
+              ],
+              "query": []
+            },
+            "description": "Any sub-path: metadata/<field>, files, server, dir …"
+          },
+          "response": []
+        },
+        {
+          "name": "Item file list",
+          "id": "e953ac61-9b60-427d-af17-824cd9d8d6b7",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/metadata/{{item_id}}/files",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "metadata",
+                "{{item_id}}",
+                "files"
+              ],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "★ OCR plain text",
+          "id": "d993c79e-81f5-47d5-bb8f-f6e5088c1cdc",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/plain"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/download/{{item_id}}/{{ia_doc}}_djvu.txt",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "download",
+                "{{item_id}}",
+                "{{ia_doc}}_djvu.txt"
+              ],
+              "query": []
+            },
+            "description": "Full OCR text. Run *Search inside a book* first, or set ia_doc to the file name without _djvu.txt (often the same as item_id)."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Look up the item's server and directory automatically",
+                  "pm.sendRequest(pm.collectionVariables.get('ia')+'/metadata/'+pm.collectionVariables.get('item_id'),(e,r)=>{if(e)return;const m=r.json();pm.collectionVariables.set('ia_server',m.server);pm.collectionVariables.set('ia_dir',m.dir);const t=(m.files||[]).find(f=>/_djvu\\.txt$/.test(f.name));if(t)pm.collectionVariables.set('ia_doc',t.name.replace('_djvu.txt',''));});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Download any file",
+          "id": "e092c658-cb4e-49aa-b05d-01f1f75ab271",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "*/*"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/download/{{item_id}}/{{file_name}}",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "download",
+                "{{item_id}}",
+                "{{file_name}}"
+              ],
+              "query": []
+            },
+            "description": "Use a file name from the file list, e.g. the PDF."
+          },
+          "response": []
+        },
+        {
+          "name": "★ Search inside a book",
+          "id": "043e2f39-c756-4d31-a161-dbf4ae68476c",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia_server_url}}/fulltext/inside.php?item_id={{item_id}}&doc={{ia_doc}}&path={{ia_dir}}&q={{query}}",
+              "host": [
+                "{{ia_server_url}}"
+              ],
+              "path": [
+                "fulltext",
+                "inside.php"
+              ],
+              "query": [
+                {
+                  "key": "item_id",
+                  "value": "{{item_id}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "doc",
+                  "value": "{{ia_doc}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "path",
+                  "value": "{{ia_dir}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "q",
+                  "value": "{{query}}",
+                  "disabled": false,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "The pre-request script fills in server, dir and doc from the metadata. Some items return no matches if they lack search-inside indexes."
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Look up the item's server and directory automatically",
+                  "pm.sendRequest(pm.collectionVariables.get('ia')+'/metadata/'+pm.collectionVariables.get('item_id'),(e,r)=>{if(e)return;const m=r.json();pm.collectionVariables.set('ia_server',m.server);pm.collectionVariables.set('ia_dir',m.dir);const t=(m.files||[]).find(f=>/_djvu\\.txt$/.test(f.name));if(t)pm.collectionVariables.set('ia_doc',t.name.replace('_djvu.txt',''));});",
+                  "pm.collectionVariables.set('ia_server_url','https://'+(pm.collectionVariables.get('ia_server')||'archive.org'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "IIIF manifest (v3)",
+          "id": "00ad2c61-43c3-4be6-bee4-cca077f88b0b",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{iiif}}/iiif/{{item_id}}/manifest.json",
+              "host": [
+                "{{iiif}}"
+              ],
+              "path": [
+                "iiif",
+                "{{item_id}}",
+                "manifest.json"
+              ],
+              "query": []
+            },
+            "description": "Page images for viewers such as Mirador."
+          },
+          "response": []
+        },
+        {
+          "name": "Thumbnail image",
+          "id": "c7c9756e-10bc-4bdf-b727-d900fbe73ba5",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "image/*"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/services/img/{{item_id}}",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "services",
+                "img",
+                "{{item_id}}"
+              ],
+              "query": []
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ],
+      "description": ""
+    },
+    {
+      "name": "Wayback Machine",
+      "id": "06bb9973-1d8d-446e-bd7f-d83d1c9dc314",
+      "item": [
+        {
+          "name": "★ Wayback: closest snapshot",
+          "id": "3c2e7ddb-f3be-4c82-b9cc-fadaf7514e77",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{ia}}/wayback/available?url={{site_url}}&timestamp={{timestamp}}",
+              "host": [
+                "{{ia}}"
+              ],
+              "path": [
+                "wayback",
+                "available"
+              ],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "{{site_url}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "timestamp",
+                  "value": "{{timestamp}}",
+                  "disabled": false,
+                  "description": "YYYYMMDD (optional)"
+                }
+              ]
+            },
+            "description": "Finds an archived copy of a web page, useful for vanished genealogy sites and old cemetery or parish pages."
+          },
+          "response": []
+        },
+        {
+          "name": "Wayback CDX: list snapshots",
+          "id": "31fa2865-5723-450b-95d3-125e7bd68c25",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{wayback}}/cdx/search/cdx?url={{site_url}}&output=json&limit=50",
+              "host": [
+                "{{wayback}}"
+              ],
+              "path": [
+                "cdx",
+                "search",
+                "cdx"
+              ],
+              "query": [
+                {
+                  "key": "url",
+                  "value": "{{site_url}}",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "output",
+                  "value": "json",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "limit",
+                  "value": "50",
+                  "disabled": false,
+                  "description": ""
+                },
+                {
+                  "key": "from",
+                  "value": "",
+                  "disabled": true,
+                  "description": "YYYY"
+                },
+                {
+                  "key": "to",
+                  "value": "",
+                  "disabled": true,
+                  "description": "YYYY"
+                },
+                {
+                  "key": "matchType",
+                  "value": "",
+                  "disabled": true,
+                  "description": "exact|prefix|host|domain"
+                },
+                {
+                  "key": "filter",
+                  "value": "statuscode:200",
+                  "disabled": true,
+                  "description": ""
+                },
+                {
+                  "key": "collapse",
+                  "value": "digest",
+                  "disabled": true,
+                  "description": ""
+                }
+              ]
+            },
+            "description": "Every capture of a URL (first row = column names)."
+          },
+          "response": []
+        },
+        {
+          "name": "Wayback: open a snapshot",
+          "id": "665f3776-dbb0-4271-9820-9f084fc51071",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "text/html"
+              }
+            ],
+            "url": {
+              "raw": "{{wayback}}/web/{{timestamp}}/{{site_url}}",
+              "host": [
+                "{{wayback}}"
+              ],
+              "path": [
+                "web",
+                "{{timestamp}}",
+                "{{site_url}}"
+              ],
+              "query": []
+            },
+            "description": "Returns the archived HTML page."
+          },
+          "response": []
+        }
+      ],
+      "description": ""
+    }
+  ],
+  "variable": [
+    {
+      "key": "ia",
+      "value": "https://archive.org",
+      "type": "string"
+    },
+    {
+      "key": "iiif",
+      "value": "https://iiif.archive.org",
+      "type": "string"
+    },
+    {
+      "key": "wayback",
+      "value": "https://web.archive.org",
+      "type": "string"
+    },
+    {
+      "key": "query",
+      "value": "Bukovsky",
+      "type": "string"
+    },
+    {
+      "key": "phrase",
+      "value": "Gross Betschkerek",
+      "type": "string"
+    },
+    {
+      "key": "place",
+      "value": "Banat",
+      "type": "string"
+    },
+    {
+      "key": "subject",
+      "value": "Banat (Romania and Yugoslavia)",
+      "type": "string"
+    },
+    {
+      "key": "census_query",
+      "value": "\"New Jersey\" AND 1910",
+      "type": "string"
+    },
+    {
+      "key": "collection",
+      "value": "genealogy",
+      "type": "string"
+    },
+    {
+      "key": "item_id",
+      "value": "atanasie",
+      "type": "string"
+    },
+    {
+      "key": "file_name",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ia_doc",
+      "value": "Atanasie",
+      "type": "string"
+    },
+    {
+      "key": "ia_server",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ia_dir",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "ia_server_url",
+      "value": "https://archive.org",
+      "type": "string"
+    },
+    {
+      "key": "site_url",
+      "value": "delpher.nl",
+      "type": "string"
+    },
+    {
+      "key": "timestamp",
+      "value": "20100101",
+      "type": "string"
+    }
+  ]
+}
